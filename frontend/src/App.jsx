@@ -73,13 +73,20 @@ function App() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
             <button 
               onClick={async () => {
-                const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://mvp-agent1-1.onrender.com';
+                let baseUrl = import.meta.env.VITE_API_BASE_URL;
+                // If it's empty, looks like a local path, or is missing, use the hardcoded Render URL
+                if (!baseUrl || baseUrl === '/' || baseUrl.includes('vercel.app')) {
+                  baseUrl = 'https://mvp-agent1-1.onrender.com';
+                }
+                
                 try {
+                  console.log(`Attempting to connect to: ${baseUrl}/`);
                   const res = await fetch(`${baseUrl}/`);
+                  if (!res.ok) throw new Error(`Server returned status ${res.status}`);
                   const data = await res.json();
-                  alert(`Connected to Backend! Status: ${data.status}`);
+                  alert(`✅ SUCCESS!\nConnected to: ${baseUrl}\nStatus: ${data.status}`);
                 } catch (err) {
-                  alert(`Connection Failed: ${err.message}. Backend URL used: ${baseUrl}`);
+                  alert(`❌ CONNECTION FAILED\nURL used: ${baseUrl}\nError: ${err.message}\n\nHint: Ensure your Render backend is awake!`);
                 }
               }}
               className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-2 group"
