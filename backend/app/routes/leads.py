@@ -1,19 +1,20 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
+from app.services.db_service import db_service
+from typing import List
 
 router = APIRouter(prefix="/leads", tags=["Leads"])
 
-@router.post("/")
-async def create_lead(data: dict):
-    return {"status": "success", "message": "Create lead stub"}
+class Lead(BaseModel):
+    name: str
+    email: str
+    source: str = "AI Agent"
+    status: str = "new"
 
-@router.get("/")
-async def get_leads():
-    return {"status": "success", "data": []}
+@router.get("/{user_id}", response_model=List[dict])
+async def get_user_leads(user_id: str):
+    return await db_service.get_leads(user_id)
 
-@router.put("/{lead_id}")
-async def update_lead(lead_id: str, data: dict):
-    return {"status": "success", "message": f"Update lead {lead_id} stub"}
-
-@router.delete("/{lead_id}")
-async def delete_lead(lead_id: str):
-    return {"status": "success", "message": f"Delete lead {lead_id} stub"}
+@router.post("/{user_id}")
+async def add_user_lead(user_id: str, lead: Lead):
+    return await db_service.add_lead(user_id, lead.dict())
