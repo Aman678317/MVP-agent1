@@ -70,13 +70,24 @@ function App() {
             The first all-in-one marketing SaaS that researches, captures leads, and runs your campaigns while you sleep.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+            <button 
+              onClick={async () => {
+                try {
+                  const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/`);
+                  const data = await res.json();
+                  alert(`Connected to Backend! Status: ${data.status}`);
+                } catch (err) {
+                  alert(`Connection Failed: ${err.message}. Make sure VITE_API_BASE_URL is set in Vercel!`);
+                }
+              }}
+              className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-2 group"
+            >
+              Test Backend Connection
+            </button>
             <button className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-2 group">
               Launch Your First Agent
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </button>
-            <button className="w-full sm:w-auto bg-slate-900 border border-white/10 hover:bg-slate-800 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all">
-              Watch Demo
             </button>
           </div>
 
