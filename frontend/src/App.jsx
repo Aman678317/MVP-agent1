@@ -139,6 +139,79 @@ function App() {
           </div>
         </header>
 
+        {activeTab === 'leads' && (
+          <div className="max-w-6xl animate-fade-in">
+            {/* Add Lead Form */}
+            <div className="bg-slate-900 border border-white/10 rounded-2xl p-8 mb-8 shadow-xl">
+              <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                <Plus className="w-5 h-5 text-purple-500" />
+                Add New Prospect
+              </h3>
+              <form 
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.target);
+                  const lead = {
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    source: 'Manual Entry'
+                  };
+                  try {
+                    const res = await fetch(`${API_BASE_URL}/leads/test-user`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify(lead)
+                    });
+                    if (res.ok) {
+                      alert("Lead saved to Firebase!");
+                      e.target.reset();
+                      // Refresh leads list logic would go here
+                    }
+                  } catch (err) {
+                    alert("Failed to save lead.");
+                  }
+                }}
+                className="grid grid-cols-1 md:grid-cols-3 gap-4"
+              >
+                <input name="name" type="text" placeholder="Full Name" required className="bg-slate-950 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                <input name="email" type="email" placeholder="Email Address" required className="bg-slate-950 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                <button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl transition-all">
+                  Save Lead
+                </button>
+              </form>
+            </div>
+
+            {/* Leads Table */}
+            <div className="bg-slate-900 border border-white/10 rounded-2xl overflow-hidden shadow-xl">
+              <div className="p-6 border-b border-white/5 flex justify-between items-center">
+                <h3 className="font-bold text-lg">Your Leads</h3>
+                <button className="text-sm text-slate-400 hover:text-white flex items-center gap-1">
+                  <Plus className="w-4 h-4" /> Export CSV
+                </button>
+              </div>
+              <table className="w-full text-left">
+                <thead className="bg-slate-950/50 text-slate-400 text-sm uppercase">
+                  <tr>
+                    <th className="px-6 py-4">Name</th>
+                    <th className="px-6 py-4">Email</th>
+                    <th className="px-6 py-4">Source</th>
+                    <th className="px-6 py-4">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  <tr className="hover:bg-white/5 transition-colors">
+                    <td className="px-6 py-4 font-medium">Sample Lead</td>
+                    <td className="px-6 py-4 text-slate-400">sample@example.com</td>
+                    <td className="px-6 py-4"><span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-xs rounded-full border border-blue-500/20">AI Search</span></td>
+                    <td className="px-6 py-4"><span className="text-green-400 flex items-center gap-1 text-sm"><CheckCircle2 className="w-4 h-4" /> New</span></td>
+                  </tr>
+                  {/* Real data would map here */}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
         {activeTab === 'research' && (
           <div className="max-w-4xl animate-fade-in">
             <div className="bg-slate-900 border border-white/10 rounded-2xl p-8 mb-8 shadow-xl">
