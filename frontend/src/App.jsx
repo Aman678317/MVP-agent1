@@ -73,12 +73,13 @@ function App() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
             <button 
               onClick={async () => {
+                const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://mvp-agent1-1.onrender.com';
                 try {
-                  const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/`);
+                  const res = await fetch(`${baseUrl}/`);
                   const data = await res.json();
                   alert(`Connected to Backend! Status: ${data.status}`);
                 } catch (err) {
-                  alert(`Connection Failed: ${err.message}. Make sure VITE_API_BASE_URL is set in Vercel!`);
+                  alert(`Connection Failed: ${err.message}. Backend URL used: ${baseUrl}`);
                 }
               }}
               className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-2 group"
