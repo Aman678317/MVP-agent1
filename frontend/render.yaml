@@ -1,0 +1,10 @@
+services:
+  - type: static
+    name: ai-marketing-saas-frontend
+    env: static
+    plan: free
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://mvp-agent1-1.onrender.com
