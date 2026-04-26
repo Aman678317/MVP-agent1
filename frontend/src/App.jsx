@@ -6,7 +6,14 @@ import {
 } from 'lucide-react';
 
 // API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://mvp-agent1-1.onrender.com';
+let API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://mvp-agent1-1.onrender.com';
+
+// If running on Vercel and the URL is relative or misconfigured, force Render
+if (typeof window !== 'undefined' && (window.location.hostname.includes('vercel.app') || API_BASE_URL === '/')) {
+  if (!import.meta.env.VITE_API_BASE_URL) {
+    API_BASE_URL = 'https://mvp-agent1-1.onrender.com';
+  }
+}
 
 function App() {
   const [view, setView] = useState('landing'); // 'landing' or 'dashboard'
@@ -135,6 +142,37 @@ function App() {
         {activeTab === 'research' && (
           <div className="max-w-4xl animate-fade-in">
             <div className="bg-slate-900 border border-white/10 rounded-2xl p-8 mb-8 shadow-xl">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+                <button 
+                  onClick={async () => {
+                    const baseUrl = 'https://mvp-agent1-1.onrender.com';
+                    
+                    try {
+                      console.log(`📡 Connecting to: ${baseUrl}/`);
+                      const res = await fetch(`${baseUrl}/`, {
+                        mode: 'cors',
+                        headers: {
+                          'Accept': 'application/json',
+                        }
+                      });
+                      
+                      if (!res.ok) {
+                        const errorText = await res.text();
+                        throw new Error(`HTTP ${res.status}: ${errorText || 'No error message'}`);
+                      }
+                      
+                      const data = await res.json();
+                      alert(`✅ CONNECTION SUCCESS!\n\nBackend: ${baseUrl}\nStatus: ${data.status}\nMessage: ${data.message}`);
+                    } catch (err) {
+                      console.error('Fetch error:', err);
+                      alert(`❌ CONNECTION FAILED\n\nTarget: ${baseUrl}\nError: ${err.message}\n\nTroubleshooting:\n1. Open ${baseUrl}/ in a new tab to wake up Render.\n2. Check if CORS is allowing ${window.location.origin}`);
+                    }
+                  }}
+                  className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-2 group"
+                >
+                  Test Backend Connection (Forced)
+                </button>
+              </div>
               <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
                 <Search className="w-5 h-5 text-blue-500" />
                 Autonomous Research Agent
