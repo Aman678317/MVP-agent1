@@ -73,25 +73,22 @@ function App() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
             <button 
               onClick={async () => {
-                let baseUrl = import.meta.env.VITE_API_BASE_URL;
-                // If it's empty, looks like a local path, or is missing, use the hardcoded Render URL
-                if (!baseUrl || baseUrl === '/' || baseUrl.includes('vercel.app')) {
-                  baseUrl = 'https://mvp-agent1-1.onrender.com';
-                }
+                // FORCE the Render URL to bypass any Vercel cache/env issues
+                const baseUrl = 'https://mvp-agent1-1.onrender.com';
                 
                 try {
-                  console.log(`Attempting to connect to: ${baseUrl}/`);
+                  console.log(`FORCED connection to: ${baseUrl}/`);
                   const res = await fetch(`${baseUrl}/`);
                   if (!res.ok) throw new Error(`Server returned status ${res.status}`);
                   const data = await res.json();
-                  alert(`✅ SUCCESS!\nConnected to: ${baseUrl}\nStatus: ${data.status}`);
+                  alert(`✅ FORCED SUCCESS!\nConnected to: ${baseUrl}\nStatus: ${data.status}`);
                 } catch (err) {
-                  alert(`❌ CONNECTION FAILED\nURL used: ${baseUrl}\nError: ${err.message}\n\nHint: Ensure your Render backend is awake!`);
+                  alert(`❌ FORCED CONNECTION FAILED\nURL: ${baseUrl}\nError: ${err.message}`);
                 }
               }}
               className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-2 group"
             >
-              Test Backend Connection
+              Test Backend Connection (Forced)
             </button>
             <button className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-2 group">
               Launch Your First Agent
