@@ -12,6 +12,21 @@ function App() {
   const [view, setView] = useState('landing'); // 'landing' or 'dashboard'
   const [activeTab, setActiveTab] = useState('research');
   const [isSidebarOpen, setSidebarOpen] = useState(true);
+  const [backendStatus, setBackendStatus] = useState('checking');
+
+  // Check backend connection on mount
+  useEffect(() => {
+    const checkConnection = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/`);
+        if (res.ok) setBackendStatus('online');
+        else setBackendStatus('offline');
+      } catch (err) {
+        setBackendStatus('offline');
+      }
+    };
+    checkConnection();
+  }, []);
 
   // Feature: Research AI
   const [searchQuery, setSearchQuery] = useState('');
@@ -101,8 +116,17 @@ function App() {
         <header className="flex justify-between items-center mb-10">
           <h2 className="text-3xl font-bold capitalize">{activeTab} Agent</h2>
           <div className="flex items-center gap-4">
-            <div className="bg-blue-500/10 border border-blue-500/20 px-4 py-2 rounded-full text-blue-400 text-sm font-medium">
-              Pro Plan Active
+            <div className={`px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2 border ${
+              backendStatus === 'online' ? 'bg-green-500/10 border-green-500/20 text-green-400' :
+              backendStatus === 'offline' ? 'bg-red-500/10 border-red-500/20 text-red-400' :
+              'bg-slate-500/10 border-slate-500/20 text-slate-400'
+            }`}>
+              <div className={`w-2 h-2 rounded-full animate-pulse ${
+                backendStatus === 'online' ? 'bg-green-500' :
+                backendStatus === 'offline' ? 'bg-red-500' :
+                'bg-slate-500'
+              }`}></div>
+              Backend: {backendStatus}
             </div>
             <div className="w-10 h-10 bg-slate-800 rounded-full border border-white/10"></div>
           </div>
